@@ -25,7 +25,12 @@ def num_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if n == 0:
+        return 0
+    elif n % 10 == 8:
+        return 1 + num_eights(n // 10)
+    else:
+        return num_eights(n // 10)
 
 def digit_distance(n):
     """Determines the digit distance of n.
@@ -47,7 +52,10 @@ def digit_distance(n):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if n < 10:
+        return 0
+    else:
+        return abs(n % 10 - (n // 10) % 10) + digit_distance(n // 10)
 
 def interleaved_sum(n, odd_func, even_func):
     """Compute the sum odd_func(1) + even_func(2) + odd_func(3) + ..., up
@@ -71,6 +79,14 @@ def interleaved_sum(n, odd_func, even_func):
     True
     """
     "*** YOUR CODE HERE ***"
+    def helper(x, odd):
+        if x > n:
+            return 0
+        if odd:
+            return odd_func(x) + helper(x + 1, False)
+        else:
+            return even_func(x) + helper(x + 1, True)
+    return helper(1, True)
 
 
 def next_smaller_dollar(bill):
@@ -107,7 +123,13 @@ def count_dollars(total):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    def loop(money, dollar):
+        if money == 0:
+            return 1
+        elif money < 0 or dollar is None:
+            return 0
+        return loop(money - dollar, dollar) + loop(money, next_smaller_dollar(dollar))
+    return loop(total, 100)
 
 def next_larger_dollar(bill):
     """Returns the next larger bill in order."""
@@ -143,7 +165,13 @@ def count_dollars_upward(total):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    def loop(money, dollar):
+        if money == total:
+            return 1
+        if money > total or dollar is None:
+            return 0
+        return loop(money + dollar, dollar) + loop(money, next_larger_dollar(dollar))
+    return loop(0, 1)
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
@@ -178,6 +206,15 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    if n == 1:
+        print_move(start, end)
+    else:
+        "*** 先将n - 1个盘子从start移动到另一个盘 ***"
+        move_stack(n - 1, start, 6 - start - end)
+        "*** 再将第n个盘从start移动到end ***"
+        move_stack(1, start, end)
+        "*** 最后将剩下的n - 1个盘子移动到end***"
+        move_stack(n - 1, 6 - start - end, end)
 
 
 from operator import sub, mul
@@ -193,5 +230,12 @@ def make_anonymous_factorial():
     ...     ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    "*** 这个实在抽象, 下面是gpt给出的答案 ***"
+    "*** 通过Y组合子来实现匿名函数的递归: lambda x: f(lambda v: x(x)(v)) ***"
+    "*** Y = lambda f: (lambda x: f(lambda v: x(x)(v))) (lambda x: f(lambda v: x(x)(v))) ***"
+    return (lambda f: (lambda x: f(lambda v: x(x)(v)))(
+        lambda x: f(lambda v: x(x)(v)))
+    )(
+        lambda f: lambda n: 1 if n == 0 else n * f(n - 1)
+    )
 
